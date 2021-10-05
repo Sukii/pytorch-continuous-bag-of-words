@@ -35,8 +35,8 @@ for i in range(CONTEXT_SIZE, len(raw_text) - CONTEXT_SIZE):
         context.append(raw_text[i - CONTEXT_SIZE + j])
     for j in range(CONTEXT_SIZE):
         context.append(raw_text[i + j + 1])
-    target = raw_text[i]
-    data.append((context, target))
+        target = raw_text[i]
+        data.append((context, target))
 
 for row in data:
     print(row)
@@ -45,7 +45,7 @@ class CBOW(torch.nn.Module):
     def __init__(self, vocab_size, embedding_dim):
         super().__init__()
 
-        #out: 1 x emdedding_dim
+        #out: 1 x embedding_dim
         self.embeddings = nn.Embedding(vocab_size, embedding_dim)
         self.linear1 = nn.Linear(embedding_dim, MBEDDING_DIM)
         self.activation_function1 = nn.ReLU()
@@ -57,13 +57,14 @@ class CBOW(torch.nn.Module):
 
     def forward(self, inputs):
         embeds = sum(self.embeddings(inputs)).view(1,-1)
+        print(self.embeddings(inputs))
         out = self.linear1(embeds)
         out = self.activation_function1(out)
         out = self.linear2(out)
         out = self.activation_function2(out)
         return out
 
-    def get_word_emdedding(self, word):
+    def get_word_embedding(self, word):
         word = torch.tensor([word_to_ix[word]])
         return self.embeddings(word).view(1,-1)
 
@@ -82,18 +83,18 @@ print(f'Default hidden dense layer of neural network {vocab_size} => {EMDEDDING_
 print(f'Second linear layer of neural network {EMDEDDING_DIM} => {MBEDDING_DIM}')
 print(f'Third linear layer of neural network {MBEDDING_DIM} => {vocab_size}')
 print("Now training in 50 epochs (iterations) ...")
+
 #TRAINING
 for epoch in range(50):
     print(f'Epoch (iteration): {epoch}')
     total_loss = 0
 
     for context, target in data:
-        context_vector = make_context_vector(context, word_to_ix)  
-        
+        context_vector = make_context_vector(context, word_to_ix)
         log_probs = model(context_vector)
-
         total_loss += loss_function(log_probs, torch.tensor([word_to_ix[target]]))
 
+ 
     #optimize at the end of each epoch
     optimizer.zero_grad()
     total_loss.backward()
