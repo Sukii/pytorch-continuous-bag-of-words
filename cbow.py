@@ -57,7 +57,6 @@ class CBOW(torch.nn.Module):
 
     def forward(self, inputs):
         embeds = sum(self.embeddings(inputs)).view(1,-1)
-        print(self.embeddings(inputs))
         out = self.linear1(embeds)
         out = self.activation_function1(out)
         out = self.linear2(out)
@@ -112,4 +111,6 @@ print(f'Context: {context}\n')
 print(f'Result:')
 print(f'a[0]: {a[0]}')
 print(f'argmax(a[0]): {torch.argmax(a[0])}')
-print(f'Prediction: {ix_to_word[torch.argmax(a[0]).item()]}')
+pword = ix_to_word[torch.argmax(a[0]).item()]
+print(f'Prediction: {pword}')
+print(f'Word-embedding: {model.get_word_embedding(pword)}')
